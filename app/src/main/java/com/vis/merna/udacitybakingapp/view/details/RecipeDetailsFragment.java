@@ -1,6 +1,6 @@
 package com.vis.merna.udacitybakingapp.view.details;
 
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.vis.merna.udacitybakingapp.R;
 import com.vis.merna.udacitybakingapp.model.Ingredient;
 import com.vis.merna.udacitybakingapp.model.Recipe;
+import com.vis.merna.udacitybakingapp.view.RecipeActivity;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import butterknife.Unbinder;
 public class RecipeDetailsFragment extends Fragment implements IRecipeDetailsView {
 
     private static final String ARG_RECIPE = "ARG_RECIPE";
+    OnStepClickListener callback;
     private Unbinder unbinder;
     private Recipe recipe;
 
@@ -37,6 +39,7 @@ public class RecipeDetailsFragment extends Fragment implements IRecipeDetailsVie
     RecyclerView stepsRecyclerView;
 
     public RecipeDetailsFragment() {
+        Log.d("data**", "fragment");
     }
 
     public static RecipeDetailsFragment newInstance(Recipe recipe) {
@@ -50,9 +53,12 @@ public class RecipeDetailsFragment extends Fragment implements IRecipeDetailsVie
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("data**", "fragment created");
         if (getArguments() != null) {
             recipe = getArguments().getParcelable(ARG_RECIPE);
             Log.d("data**", recipe.getName());
+        } else {
+            recipe = ((RecipeActivity) getActivity()).getRecipeData();
         }
     }
 
@@ -94,15 +100,23 @@ public class RecipeDetailsFragment extends Fragment implements IRecipeDetailsVie
         stepsRecyclerView.setLayoutManager(linearLayoutManager);
         stepsRecyclerView.addItemDecoration(dividerItemDecoration);
         stepsRecyclerView.setAdapter(new StepsAdapter(getContext(), recipe.getSteps(), position -> {
-            handleShowingStepsDetails(position);
+            callback.onStepSelected(position);
         }));
         stepsRecyclerView.setVisibility(View.VISIBLE);
     }
 
-    private void handleShowingStepsDetails(int position) {
-        Intent intent = new Intent(getContext(), RecipeStepDetailActivity.class);
-        intent.putExtra(RecipeStepDetailActivity.ARGS_RECIPE, recipe);
-        intent.putExtra(RecipeStepDetailActivity.ARGS_STEP_SELECTED, position);
-        startActivity(intent);
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            callback = (OnStepClickListener) context;
+        } catch (ClassCastException e) { 
+            throw new ClassCastException(context.toString()
+                    + " must implement OnStepClickListener");
+        }
+    }
+
+    public interface OnStepClickListener {
+        void onStepSelected(int position);
     }
 }

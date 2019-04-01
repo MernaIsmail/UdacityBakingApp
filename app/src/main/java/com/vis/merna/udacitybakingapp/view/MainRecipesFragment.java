@@ -1,10 +1,12 @@
 package com.vis.merna.udacitybakingapp.view;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -57,8 +59,15 @@ public class MainRecipesFragment extends Fragment implements IMainView, RecipesA
     }
 
     private void setMoviesRecyclerView(List<Recipe> recipes) {
-        recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                RecyclerView.VERTICAL, false));
+
+        boolean twoPaneMode = getResources().getBoolean(R.bool.twoPaneMode);
+        if (twoPaneMode) {
+            recipesRecyclerView.setLayoutManager(new GridLayoutManager(getActivity().
+                    getApplicationContext(), 3));
+        } else {
+            recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().
+                    getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        }
         recipesRecyclerView.setAdapter(new RecipesAdapter(getContext(), recipes, this));
         recipesRecyclerView.setVisibility(View.VISIBLE);
     }
@@ -71,10 +80,14 @@ public class MainRecipesFragment extends Fragment implements IMainView, RecipesA
 
     @Override
     public void onItemClick(int position) {
-        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().
-                beginTransaction();
-        fragmentTransaction.replace(R.id.recipes_list_fragment,
-                RecipeDetailsFragment.newInstance(recipes.get(position))).
-                addToBackStack(null).commit();
+        Intent intent = new Intent(getContext(), RecipeActivity.class);
+        intent.putExtra(RecipeActivity.ARG_RECIPE, recipes.get(position));
+        startActivity(intent);
+
+//        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().
+//                beginTransaction();
+//        fragmentTransaction.replace(R.id.recipes_list_fragment,
+//                RecipeDetailsFragment.newInstance(recipes.get(position))).
+//                addToBackStack(null).commit();
     }
 }
