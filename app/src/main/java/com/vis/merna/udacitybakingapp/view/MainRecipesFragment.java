@@ -3,6 +3,7 @@ package com.vis.merna.udacitybakingapp.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +15,9 @@ import com.vis.merna.udacitybakingapp.R;
 import com.vis.merna.udacitybakingapp.model.Recipe;
 import com.vis.merna.udacitybakingapp.presenter.IMainRecipesPresenter;
 import com.vis.merna.udacitybakingapp.presenter.MainRecipesPresenter;
+import com.vis.merna.udacitybakingapp.view.details.RecipeDetailsFragment;
 
 import java.util.List;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +27,7 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainRecipesFragment extends Fragment implements IMainView {
+public class MainRecipesFragment extends Fragment implements IMainView, RecipesAdapter.ItemClickListener {
 
     @BindView(R.id.recipes_recycler_view)
     RecyclerView recipesRecyclerView;
@@ -50,13 +51,7 @@ public class MainRecipesFragment extends Fragment implements IMainView {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main_recipes, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mainRecipesPresenter.loadRecipesData();
-            }
-        });
-
+        swipeRefreshLayout.setOnRefreshListener(() -> mainRecipesPresenter.loadRecipesData());
         mainRecipesPresenter.loadRecipesData();
         return rootView;
     }
@@ -64,12 +59,22 @@ public class MainRecipesFragment extends Fragment implements IMainView {
     private void setMoviesRecyclerView(List<Recipe> recipes) {
         recipesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
                 RecyclerView.VERTICAL, false));
-        recipesRecyclerView.setAdapter(new RecipesAdapter(getContext(), recipes));
+        recipesRecyclerView.setAdapter(new RecipesAdapter(getContext(), recipes, this));
         recipesRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void updateView(List<Recipe> recipes) {
+        this.recipes = recipes;
         setMoviesRecyclerView(recipes);
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().
+                beginTransaction();
+        fragmentTransaction.replace(R.id.recipes_list_fragment,
+                RecipeDetailsFragment.newInstance(recipes.get(position))).
+                addToBackStack(null).commit();
     }
 }
