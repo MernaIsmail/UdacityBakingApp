@@ -110,7 +110,7 @@ public class RecipeDetailsFragment extends Fragment implements IRecipeDetailsVie
         super.onAttach(context);
         try {
             callback = (OnStepClickListener) context;
-        } catch (ClassCastException e) { 
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnStepClickListener");
         }

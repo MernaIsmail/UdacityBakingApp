@@ -4,17 +4,42 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.vis.merna.udacitybakingapp.R;
 import com.vis.merna.udacitybakingapp.model.Recipe;
 import com.vis.merna.udacitybakingapp.view.details.RecipeDetailsFragment;
 import com.vis.merna.udacitybakingapp.view.details.RecipeStepDetailActivity;
 import com.vis.merna.udacitybakingapp.view.details.RecipeStepDetailFragment;
+import com.vis.merna.udacitybakingapp.widget.RecipeWidgetService;
 
 public class RecipeActivity extends AppCompatActivity implements RecipeDetailsFragment.OnStepClickListener {
 
     public static final String ARG_RECIPE = "ARG_RECIPE";
     private Recipe recipe;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.recipe_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add_widget) {
+            RecipeWidgetService.updateWidget(this, recipe);
+            Toast.makeText(getApplicationContext(),
+                    String.format("Recipe %s added to widget", recipe.getName()), Toast.LENGTH_LONG).
+                    show();
+            return true;
+        } else
+            return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
