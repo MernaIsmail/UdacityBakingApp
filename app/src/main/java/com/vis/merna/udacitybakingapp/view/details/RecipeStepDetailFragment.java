@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -23,6 +24,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 import com.vis.merna.udacitybakingapp.R;
 import com.vis.merna.udacitybakingapp.model.Step;
 
@@ -46,6 +48,8 @@ public class RecipeStepDetailFragment extends Fragment {
     SimpleExoPlayerView exoPlayerView;
     @BindView(R.id.step_long_desc_text_view)
     TextView stepLongDescTextView;
+    @BindView(R.id.step_thumbnail_image)
+    ImageView imageView;
 
     @Override
     public void onPause() {
@@ -88,7 +92,9 @@ public class RecipeStepDetailFragment extends Fragment {
 
         stepLongDescTextView.setText(step.getDescription());
 
-        // TODO: 4/1/2019 handle thumbnail image
+        if (step.getThumbnailURL() != null) {
+            Picasso.get().load(step.getThumbnailURL()).into(imageView);
+        }
 
         return rootView;
     }

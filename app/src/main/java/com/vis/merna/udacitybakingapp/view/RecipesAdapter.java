@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
 import com.vis.merna.udacitybakingapp.R;
 import com.vis.merna.udacitybakingapp.model.Recipe;
 
@@ -38,7 +39,9 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipeViewHolder> {
         holder.recipeNameTextView.setText(recipes.get(position).getName());
         holder.recipeServingTextView.setText(String.format("Serving : %s",
                 recipes.get(position).getServings()));
-        // TODO: 3/31/2019 handle imageview with default 
+        if(recipes.get(position).getImage()!=null){
+            Picasso.get().load(recipes.get(position).getImage()).into(holder.recipeImageView);
+        }
     }
 
     @Override

@@ -33,8 +33,6 @@ public class MainRecipesFragment extends Fragment implements IMainView, RecipesA
 
     @BindView(R.id.recipes_recycler_view)
     RecyclerView recipesRecyclerView;
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
 
 
     private Unbinder unbinder;
@@ -53,7 +51,6 @@ public class MainRecipesFragment extends Fragment implements IMainView, RecipesA
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main_recipes, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-        swipeRefreshLayout.setOnRefreshListener(() -> mainRecipesPresenter.loadRecipesData());
         mainRecipesPresenter.loadRecipesData();
         return rootView;
     }
